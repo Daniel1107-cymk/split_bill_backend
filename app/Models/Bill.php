@@ -12,7 +12,7 @@ class Bill extends Model
     protected $table = 'bills';
 
     protected $fillable = [
-        'user_id', 'code', 'date', 'grand_total',
+        'user_id', 'code', 'date', 'total_people', 'splited_value', 'grand_total',
     ];
 
     public function user() {
