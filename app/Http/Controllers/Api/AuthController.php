@@ -55,6 +55,11 @@ class AuthController extends ApiController
         return $this->respond('success', $data, 200);
     }
 
+    public function logout() {
+        auth()->logout();
+        return $this->respond('success', null, 200);
+    }
+
     protected function respond($status, $data, $code) {
         return response()->json([
             'status' => $status,
