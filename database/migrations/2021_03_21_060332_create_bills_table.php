@@ -17,6 +17,8 @@ class CreateBillsTable extends Migration
             $table->id();
             $table->string('code', 100);
             $table->date('date');
+            $table->unsignedInteger('total_people');
+            $table->decimal('splited_value', 15, 2);
             $table->decimal('grand_total', 15, 2);
             $table->foreignId('user_id')->references('id')->on('users');
             $table->timestamps();
