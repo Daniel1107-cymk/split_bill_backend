@@ -23,6 +23,10 @@ Route::prefix('v1')->group(function() {
 
     Route::middleware('auth:api')->group(function() {
         Route::get('me', [UserController::class, 'me']);
+        Route::post('update-profile', [UserController::class, 'updateProfile']);
+        Route::post('change-password', [UserController::class, 'changePassword']);
+        Route::get('bill', [UserController::class, 'indexBill']);
+        Route::post('bill', [UserController::class, 'storeBill']);
     });
 });
 
