@@ -19,6 +19,7 @@ class CreateBillDetailsTable extends Migration
             $table->integer('quantity');
             $table->decimal('price', 15, 2);
             $table->decimal('sub_total', 15, 2);
+            $table->foreignId('bill_id')->references('id')->on('bills');
             $table->timestamps();
         });
     }

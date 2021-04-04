@@ -27,6 +27,7 @@ Route::prefix('v1')->group(function() {
         Route::post('change-password', [UserController::class, 'changePassword']);
         Route::get('bill', [UserController::class, 'indexBill']);
         Route::post('bill', [UserController::class, 'storeBill']);
+        Route::get('bill/{id}', [UserController::class, 'showBill']);
     });
 });
 

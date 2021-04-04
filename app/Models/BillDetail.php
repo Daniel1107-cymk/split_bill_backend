@@ -11,11 +11,12 @@ class BillDetail extends Model
 
     protected $table = 'bill_details';
 
-    protected $fillabel = [
-        'item_name',
-        'quantity',
-        'price',
-        'sub_total',
+    protected $fillable = [
+        'bill_id', 'item_name', 'quantity', 'price', 'sub_total',
+    ];
+
+    protected $hidden = [
+        'created_at', 'updated_at',
     ];
 
     public function bill() {

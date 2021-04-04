@@ -7,6 +7,7 @@ use App\Models\BillDetail;
 use App\Models\User;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Validator;
 
@@ -61,9 +62,19 @@ class UserController extends ApiController
     }
 
     public function indexBill() {
-        $userId = auth()->user()->id;
-        $bills = Bill::where('user_id', $userId)->get();
+        $user_id = auth()->user()->id;
+        $bills = Bill::where('user_id', $user_id)->get();
         return $this->respond('success', $bills, 200);
+    }
+
+    public function showBill($id) {
+        $user_id = auth()->user()->id;
+        $bill = Bill::where([
+            ['user_id', $user_id],
+            ['id', $id],
+        ])->first();
+        $bill->load('billDetails');
+        return $this->respond('success', $bill, 200);
     }
 
     public function storeBill(Request $request) {
@@ -71,17 +82,48 @@ class UserController extends ApiController
             $request->all(), 
             [
                 'total_people' => 'required|numeric',
-                'bill' => 'required|array|min:1',
-                'bill.*.item_name' => 'required',
-                'bill.*.quantity' => 'required|min:1',
-                'bill.*.price' => 'required|numeric',
+                'grand_total' => 'required|numeric',
+                'bill_details' => 'required|array|min:1',
+                'bill_details.*.item_name' => 'required',
+                'bill_details.*.quantity' => 'required|numeric|min:1',
+                'bill_details.*.price' => 'required|numeric',
             ],
         );
         if($validation->fails()) {
             return $this->respond('fail', $validation->errors(), 422);
         }
-        // $code = 'SP'.date('YmdHis');
-        return $this->respond('succes', $request->all(), 200);
+
+        // insert into bill
+        $user_id = auth()->user()->id;
+        $code = 'SP'.date('YmdHis');
+        $splitted_value = $request['grand_total'] / $request['total_people'];
+
+        $bill = Bill::create(array_merge(
+            $request->except(['bill_details']),
+            [
+                'user_id' => $user_id,
+                'code' => $code,
+                'splitted_value' => $splitted_value,
+                'date' => Carbon::now(),
+            ],
+        ));
+
+        // insert into bill detail
+        $bill_details = $request['bill_details'];
+        $new_bill_details = [];
+        for($i = 0; $i < count($bill_details); $i++) {
+            $subtotal = $bill_details[$i]['quantity'] * $bill_details[$i]['price'];
+            $new_bill_details[] = [
+                'bill_id' => $bill->id,
+                'item_name' => $bill_details[$i]['item_name'],
+                'quantity' => $bill_details[$i]['quantity'],
+                'price' => $bill_details[$i]['price'],
+                'sub_total' => $subtotal,
+            ];
+        }
+        $bill->billDetails()->createMany($new_bill_details);
+
+        return $this->respond('success', $new_bill_details, 200);
     }
 
     protected function respond($status, $data, $code) {
