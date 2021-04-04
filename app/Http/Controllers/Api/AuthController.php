@@ -44,7 +44,7 @@ class AuthController extends ApiController
         if (!$token = auth()->attempt($request->all())) {
             $data = ['email' => 'Email and password not match'];
 
-            return $this->respond('fail', $data, 401);
+            return $this->respond('fail', $data, 404);
         }
         $data = [
             'access_token' => $token,
