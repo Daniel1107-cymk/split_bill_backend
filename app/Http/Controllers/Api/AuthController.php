@@ -18,7 +18,6 @@ class AuthController extends ApiController
                 'full_name' => 'required',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|confirmed',
-                'gender' => 'required',
             ],
         );
         if($validation->fails()) {
