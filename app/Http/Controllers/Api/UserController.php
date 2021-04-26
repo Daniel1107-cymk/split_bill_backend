@@ -26,7 +26,6 @@ class UserController extends ApiController
             $request->all(),
             [
                 'full_name' => 'required',
-                'gender' => 'required',
             ],
         );
         if($validation->fails()) {
@@ -83,10 +82,10 @@ class UserController extends ApiController
             [
                 'total_people' => 'required|numeric',
                 'grand_total' => 'required|numeric',
-                'bill_details' => 'required|array|min:1',
-                'bill_details.*.item_name' => 'required',
-                'bill_details.*.quantity' => 'required|numeric|min:1',
-                'bill_details.*.price' => 'required|numeric',
+                // 'bill_details' => 'required|array|min:1',
+                // 'bill_details.*.item_name' => 'required',
+                // 'bill_details.*.quantity' => 'required|numeric|min:1',
+                // 'bill_details.*.price' => 'required|numeric',
             ],
         );
         if($validation->fails()) {
@@ -109,19 +108,19 @@ class UserController extends ApiController
         ));
 
         // insert into bill detail
-        $bill_details = $request['bill_details'];
-        $new_bill_details = [];
-        for($i = 0; $i < count($bill_details); $i++) {
-            $subtotal = $bill_details[$i]['quantity'] * $bill_details[$i]['price'];
-            $new_bill_details[] = [
-                'bill_id' => $bill->id,
-                'item_name' => $bill_details[$i]['item_name'],
-                'quantity' => $bill_details[$i]['quantity'],
-                'price' => $bill_details[$i]['price'],
-                'sub_total' => $subtotal,
-            ];
-        }
-        $bill->billDetails()->createMany($new_bill_details);
+        // $bill_details = $request['bill_details'];
+        // $new_bill_details = [];
+        // for($i = 0; $i < count($bill_details); $i++) {
+        //     $subtotal = $bill_details[$i]['quantity'] * $bill_details[$i]['price'];
+        //     $new_bill_details[] = [
+        //         'bill_id' => $bill->id,
+        //         'item_name' => $bill_details[$i]['item_name'],
+        //         'quantity' => $bill_details[$i]['quantity'],
+        //         'price' => $bill_details[$i]['price'],
+        //         'sub_total' => $subtotal,
+        //     ];
+        // }
+        // $bill->billDetails()->createMany($new_bill_details);
 
         return $this->respond('success', $new_bill_details, 200);
     }
