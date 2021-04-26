@@ -122,7 +122,7 @@ class UserController extends ApiController
         // }
         // $bill->billDetails()->createMany($new_bill_details);
 
-        return $this->respond('success', $new_bill_details, 200);
+        return $this->respond('success', $bill, 200);
     }
 
     protected function respond($status, $data, $code) {
